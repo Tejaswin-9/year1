@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slideshow</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .slideshow-container {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #ff69b4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ff1493;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <img id="slideshow" src="images/image1.png" alt="Slideshow Image">
+        <div class="button-container">
+            <button id="prevButton" style="display: none;" onclick="changeImage(-1)">Previous</button>
+            <button id="nextButton" onclick="changeImage(1)">Next</button>
+            <button id="nextGameButton" style="display: none;" onclick="location.href='/hangman'">Next Game</button>
+        </div>
+    </div>
+    <script>
+        const images = [
+            'image1.png',
+            'image2.png',
+            'image3.png',
+            'image4.png',
+            'image5.png',
+            'image6.png',
+            'image7.png',
+            'image8.png'
+        ];
+        let currentImageIndex = 0;
+        const imageElement = document.getElementById('slideshow');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const nextGameButton = document.getElementById('nextGameButton');
+
+        function showImage(index) {
+            if (images.length === 0) return;
+            if (index < 0) index = images.length - 1;
+            if (index >= images.length) index = 0;
+            currentImageIndex = index;
+            imageElement.src = 'images/' + images[currentImageIndex];
+
+            if (currentImageIndex === 0) {
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'inline-block';
+                nextGameButton.style.display = 'none';
+            } else if (currentImageIndex === images.length - 1) {
+                prevButton.style.display = 'inline-block';
+                nextButton.style.display = 'none';
+                nextGameButton.style.display = 'inline-block';
+            } else {
+                prevButton.style.display = 'inline-block';
+                nextButton.style.display = 'inline-block';
+                nextGameButton.style.display = 'none';
+            }
+        }
+
+        function changeImage(step) {
+            showImage(currentImageIndex + step);
+        }
+
+        showImage(currentImageIndex);
+    </script>
+</body>
+</html>

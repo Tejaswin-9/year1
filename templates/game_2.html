@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* Soft pink gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .game-container {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #ff69b4; /* Pink color for heading */
+            margin-bottom: 20px;
+        }
+        .word-container {
+            margin: 20px 0;
+            font-size: 2em;
+            letter-spacing: 10px; /* Increased spacing for clarity */
+        }
+        .word-blank {
+            display: inline-block;
+            padding: 5px 10px;
+            border-bottom: 2px solid #ff69b4;
+            margin: 0 5px;
+        }
+        .guessed-letters {
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        .letters {
+            margin-top: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .keyboard {
+            margin: 20px 0;
+        }
+        .keyboard-button {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            font-size: 1.2em;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 5px;
+            background: #ff69b4;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+        .keyboard-button:hover {
+            background-color: #ff1493;
+        }
+        .keyboard-row {
+            margin: 5px 0;
+        }
+        .lives-container {
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #555;
+        }
+        .game-over {
+            display: none;
+        }
+        .game-over h2 {
+            font-size: 1.8em;
+            color: #ff69b4;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: #fff;
+            background-color: #ff69b4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #ff1493;
+        }
+        .button-restart {
+            background-color: #ffa07a;
+        }
+        .button-restart:hover {
+            background-color: #f08080;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Hangman Game</h1>
+        <div class="word-container" id="wordContainer">
+            <!-- Blank spaces for the word will be displayed here -->a
+        </div>
+        <div class="guessed-letters">
+            <p>Guessed Letters:</p>
+            <div id="lettersContainer" class="letters">
+                <!-- Guessed letters will be displayed here -->
+            </div>
+        </div>
+        <div class="lives-container">
+            <p>Lives: <span id="livesCount"></span></p>
+        </div>
+        <div class="keyboard">
+            <!-- Keyboard buttons for guessing letters -->
+            <div class="keyboard-row">
+                <div class="keyboard-button">A</div>
+                <div class="keyboard-button">B</div>
+                <div class="keyboard-button">C</div>
+                <div class="keyboard-button">D</div>
+                <div class="keyboard-button">E</div>
+                <div class="keyboard-button">F</div>
+                <div class="keyboard-button">G</div>
+                <div class="keyboard-button">H</div>
+                <div class="keyboard-button">I</div>
+                <div class="keyboard-button">J</div>
+                <div class="keyboard-button">K</div>
+                <div class="keyboard-button">L</div>
+                <div class="keyboard-button">M</div>
+                <div class="keyboard-button">N</div>
+                <div class="keyboard-button">O</div>
+                <div class="keyboard-button">P</div>
+                <div class="keyboard-button">Q</div>
+                <div class="keyboard-button">R</div>
+                <div class="keyboard-button">S</div>
+                <div class="keyboard-button">T</div>
+                <div class="keyboard-button">U</div>
+                <div class="keyboard-button">V</div>
+                <div class="keyboard-button">W</div>
+                <div class="keyboard-button">X</div>
+                <div class="keyboard-button">Y</div>
+                <div class="keyboard-button">Z</div>
+            </div>
+        </div>
+        <div class="game-over" id="gameOver">
+            <h2 id="gameOverMessage">Game Over! The word is <span id="finalWord">.</span>.</h2>
+            <a href="/hangman" id="restartButton" class="button button-restart">Restart</a>
+            <a href="/message" id="nextButton" class="button" style="display: none;">Next</a>
+        </div>
+    </div>
+    <script>
+        const words =['HAPPY', 'AWWWWW', 'LOVE', 'SKULL', 'FAMILY', 'HSKSJSJ', 'HEHEHEHE']; // List of words
+        const word = words[Math.floor(Math.random() * words.length)]; // Pick a random word
+        let guessedLetters = [];
+        let correctGuesses = Array(word.length).fill('_');
+        let lives = 5; // Number of lives
+
+        function displayWord() {
+            document.getElementById('wordContainer').innerHTML = correctGuesses.join(' ').split('').map(letter => 
+                `<span class="word-blank">${letter}</span>`).join('');
+        }
+
+        function displayGuessedLetters() {
+            document.getElementById('lettersContainer').innerText = guessedLetters.join(', ');
+        }
+
+        function displayLives() {
+            document.getElementById('livesCount').innerText = lives;
+        }
+
+        function endGame(success) {
+            document.getElementById('gameOver').style.display = 'block';
+            document.getElementById('finalWord').innerText = word;
+            document.getElementById('nextButton').style.display = success ? 'inline-block' : 'none';
+            document.getElementById('restartButton').style.display = success ? 'none' : 'inline-block';
+            document.querySelectorAll('.keyboard-button').forEach(button => {
+                button.removeEventListener('click', handleKeyboardClick);
+                button.style.backgroundColor = '#ccc';
+                button.style.cursor = 'not-allowed';
+            });
+        }
+
+        function handleGuess(letter) {
+            if (guessedLetters.includes(letter) || lives === 0) return;
+            guessedLetters.push(letter);
+            if (word.includes(letter)) {
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) correctGuesses[i] = letter;
+                }
+                if (!correctGuesses.includes('_')) {
+                    endGame(true);
+                }
+            } else {
+                lives--;
+                if (lives === 0) {
+                    endGame(false);
+                }
+            }
+            displayWord();
+            displayGuessedLetters();
+            displayLives();
+        }
+
+        function handleKeyboardClick(event) {
+            const letter = event.target.innerText;
+            if (letter.match(/[A-Z]/)) {
+                handleGuess(letter);
+            }
+        }
+
+        document.querySelectorAll('.keyboard-button').forEach(button => {
+            button.addEventListener('click', handleKeyboardClick);
+        });
+
+        displayWord();
+        displayGuessedLetters();
+        displayLives();
+    </script>
+</body>
+</html>
